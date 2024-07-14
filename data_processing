@@ -1,0 +1,30 @@
+import json
+from tqdm import tqdm
+
+
+with open('/Users/chenql/Desktop/TextVQA_0.5.1_train.json', 'r') as file:
+    train_text = json.load(file)
+image_path = 'images'
+formatted_datas = []
+for single_data in tqdm(train_text['data']):
+    formatted_data = {
+        "id": str(single_data['question_id']),
+        "image": f"{image_path}/{single_data['image_id']}.jpg",
+        "conversations": [
+            {
+                "role": "user",
+                "content": f"<image>\n{single_data['question']}"
+            },
+            {
+                "role": "assistant",
+                "content": f"{single_data['answers'][0]}"
+            }
+        ]
+    }
+    formatted_datas.append(formatted_data)
+
+# Save the formatted data to a JSON file
+with open('formatted_data.json', 'w') as f:
+    json.dump(formatted_datas, f, indent=4)
+    
+print("Data has been successfully formatted and saved to formatted_data.json.")
